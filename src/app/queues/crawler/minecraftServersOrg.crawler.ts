@@ -10,12 +10,13 @@ const SERVER_LIST_URL = 'https://minecraftservers.org/index/';
 const START_PAGE = 1;
 const WAIT_TIME_MS = 3000;
 const CRAWL_LIMIT = 2000;
+let STOP_JOB = false;
 
 const onCrawler = async (job: Job) => {
   /*
    * Step 1: Loop and request each MinecraftServers.org page
    */
-  for (let loop = START_PAGE; loop < CRAWL_LIMIT; loop++) {
+  for (let loop = START_PAGE; loop < CRAWL_LIMIT && !STOP_JOB; loop++) {
     try {
       logger.info(`Running Minecraftservers.org crawl for page [${loop}/${CRAWL_LIMIT}]`);
 
@@ -31,6 +32,7 @@ const onCrawler = async (job: Job) => {
       if (response.status === 404) {
         loop = CRAWL_LIMIT;
         logger.info('Minecraftservers.org crawl reached end');
+        STOP_JOB = true;
         return; // Complete the job when 404 is reached
       }
       if (response.status !== 200) {
