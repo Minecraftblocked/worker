@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// Models
+model Crawl {
+  id Int @id @default(autoincrement())
+
+  serverListOrigin   String
+  serverName         String?
+  serverHost         String?
+  serverIpAddress    String?
+  serverHostWildcard String?
+  serverPort         Int?
+
+  hashedHost         String
+  hashedHostWildcard String?
+
+  censored Boolean @default(false)
+
+  Server Server[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Server {
+  id Int @id @default(autoincrement())
+
+  mojangHash String @unique
+
+  isBlocked Boolean @default(true)
+
+  blockedReason String?
+  ignoreReason  String?
+
+  crawl   Crawl? @relation(fields: [crawlId], references: [id])
+  crawlId Int?
+
+  ServerStatusChange ServerStatusChange[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([crawlId])
+}
+
+model ServerStatusChange {
+  id Int @id @default(autoincrement())
+
+  newIsBlocked Boolean
+
+  server Server @relation(fields: [serverId], references: [id])
+
+  serverId Int
+
+  createdAt DateTime @default(now())
+
+  @@index([serverId])
+}

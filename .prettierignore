@@ -1,0 +1,44 @@
+# Ignore artifacts:
+build
+coverage
+dist
+
+# Ignore all log files
+*.log
+
+# Ignore node modules
+node_modules
+
+# Ignore cache
+.cache
+
+# Ignore IDE specific config
+.vscode
+.idea
+
+# Ignore TypeScript type declaration files
+*.d.ts
+
+# Ignore dotenv environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Ignore Jest snapshots
+__snapshots__
+
+# Ignore git files
+.git
+
+
+# Ignore JS
+*.js
+
+# Ignore JSON
+*.json
+
+# ESLint
+.eslintignore
+.eslintrc.json
