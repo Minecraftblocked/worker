@@ -30,13 +30,13 @@ export const findCrawlByHash = async (serverHash: string) => {
  * Check whether crawl already exists based on hostname and port number
  */
 export const doesCrawlExistByHostAndPort = async (serverHost: string, serverPort: number): Promise<boolean> => {
-  const count = await prisma.crawl.count({
+  const record = await prisma.crawl.findFirst({
     where: {
       serverHost,
       serverPort,
     },
   });
-  return count > 0;
+  return record != null;
 };
 
 export const addNewCrawl = async (

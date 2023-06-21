@@ -10,12 +10,12 @@ import { findCrawlByHash } from './crawls.service';
  * @param serverHash SHA-1 hash of the blocked server from the Mojang Blocked Servers API
  */
 export const insertOrUpdateServerByHash = async (serverHash: string) => {
-  const count = await prisma.server.count({
+  const record = await prisma.server.findUnique({
     where: {
       mojangHash: serverHash,
     },
   });
-  if (count < 1) {
+  if (record == null) {
     logger.debug(`Insert new server blocked hash into DB: ${serverHash}`);
     await prisma.server.create({
       data: {
@@ -61,7 +61,7 @@ export const insertOrUpdateServerByHash = async (serverHash: string) => {
  * @returns whether it could find a crawl within the database to associate with
  */
 export const attachServerWithCrawl = async (serverHash: string): Promise<boolean> => {
-  const server = await prisma.server.findFirst({
+  const server = await prisma.server.findUnique({
     where: {
       mojangHash: serverHash,
     },
