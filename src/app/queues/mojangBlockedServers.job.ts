@@ -21,10 +21,6 @@ import { delay } from '../util/delay';
 const WAIT_TIME_MS = 500;
 
 const onJob = async (job: Job) => {
-  // todo:
-  //! 1. servers_changes table
-  //! 2. servers_name_changes
-
   /**
    *! Step 1: Request Mojang API & transform into hashes
    */
@@ -62,7 +58,7 @@ const onJob = async (job: Job) => {
   }
 
   //* Step 6: Update all servers in database that are not in the Mojang Hashes list
-  await updateManyUnblockedServers(crawledHashes, false);
+  await updateManyUnblockedServers(crawledHashes);
 
   logger.info('Completed Mojang API Crawl Job');
   job.progress(100);

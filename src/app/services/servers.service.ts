@@ -5,7 +5,7 @@ import { findCrawlByHash } from './crawls.service';
 
 /**
  * Insert new blocked servers from Mojang into the database.
- * If already existing, update the existing database record.
+ * If already existing, update the existing database record if the server is unblocked.
  *
  * @param serverHash SHA-1 hash of the blocked server from the Mojang Blocked Servers API
  */
@@ -30,8 +30,9 @@ export const insertOrUpdateServerByHash = async (serverHash: string) => {
         mojangHash: serverHash,
       },
     });
-    if (server && !server.isBlocked) {
-      logger.debug(`Changed status to Unblocked for Mojang hash: ${serverHash}`);
+    // Found server and is unblocked, meaning status update
+    if (server && server.isBlocked === false) {
+      logger.debug(`Changed status to Blocked for Mojang hash: ${serverHash}`);
       // Update server to be blocked
       await prisma.server.update({
         where: {
@@ -98,7 +99,7 @@ export const updateServerWithCrawl = async (serverHash: string, crawlId: number)
   });
 };
 
-export const updateManyUnblockedServers = async (hashes: string[], isBlocked: boolean) => {
+export const updateManyUnblockedServers = async (hashes: string[]) => {
   // Retrieve all servers from the database that are still marked as blocked,
   // but are not included in the list provided by the Mojang API.
   const serverIds = await prisma.server
@@ -107,31 +108,32 @@ export const updateManyUnblockedServers = async (hashes: string[], isBlocked: bo
         mojangHash: {
           notIn: hashes,
         },
-        isBlocked: false,
+        isBlocked: true,
       },
       select: {
-        id: true, // select only ids
+        id: true, 
       },
     })
-    .then((servers) => servers.map((server) => server.id));
+    .then((servers: any) => servers.map((server: any) => server.id));
 
-  logger.debug(`Updated the Status to Unblocked for ${serverIds.length} servers`);
+  logger.info(`Updated the Status to Unblocked for ${serverIds.length} servers`);
+  logger.info(`Server Ids: ${serverIds}`);
 
   // Now, update all those servers to be unblocked
   await prisma.server.updateMany({
     where: {
-      mojangHash: {
-        notIn: hashes,
-      },
+      id: {
+        in: serverIds
+      }
     },
     data: {
-      isBlocked,
+      isBlocked: false,
     },
   });
 
   // Now store all the unblocked statuses in database
   await serverIds.map(
-    async (serverId) =>
+    async (serverId: number) =>
       await prisma.serverStatusChange.create({
         data: {
           serverId,
