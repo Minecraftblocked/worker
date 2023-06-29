@@ -52,8 +52,8 @@ const onJob = async (job: Job) => {
     }
   }
 
-  // Set hashes blocked into Redis cache
-  await redis.set('blocked_hashes', JSON.stringify(responseHashes), 'EX', 3600);
+  // Set hashes blocked into Redis cache (expiry of 1 hour)
+  await redis.set('mojang_blocked_hashes', JSON.stringify(responseHashes), 'EX', 3600);
 
   // Compute job time taken
   const endTime = Date.now();
