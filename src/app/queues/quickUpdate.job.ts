@@ -5,6 +5,7 @@ import logger from '../../config/logger';
 import { attachServerWithCrawl, insertOrUpdateServerByHash } from '../services/servers.service';
 import { processBlockedServerHash } from '../services/providers.service';
 import { redis } from '../../config/redis';
+import { delay } from '../util/delay';
 
 /**
  * This job retrieves blocked server hashes from Mojang's API
@@ -47,6 +48,7 @@ const onJob = async (job: Job) => {
     // [3]: If a crawl / minecraft server has not been found in DB, then check another service
     if (!foundCrawl) {
       await processBlockedServerHash(newHash);
+      await delay(500);
     }
   }
 
