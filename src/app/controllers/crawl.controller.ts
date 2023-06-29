@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
-import { crawlServerListQueue } from '../../config/queue';
+import { crawlServerListQueue } from '../../config/redis';
 import { secretMiddleware } from '../middlewares/secret.middleware';
 
 const router = Router();

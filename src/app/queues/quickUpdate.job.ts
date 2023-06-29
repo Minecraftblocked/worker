@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { Job } from 'bull';
 import FailedMojangAPIError from '../errors/queue/failedMojangAPI';
-import Redis from 'ioredis';
 import logger from '../../config/logger';
 import { attachServerWithCrawl, insertOrUpdateServerByHash } from '../services/servers.service';
 import { processBlockedServerHash } from '../services/providers.service';
-
-// Initalise Redis client
-const redis = new Redis();
+import { redis } from '../../config/redis';
 
 /**
  * This job retrieves blocked server hashes from Mojang's API

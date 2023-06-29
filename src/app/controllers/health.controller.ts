@@ -1,6 +1,6 @@
 import { Queue } from 'bull';
 import { Request, Response, Router } from 'express';
-import { crawlMojangQueue, crawlServerListQueue } from '../../config/queue';
+import { crawlMojangQueue, crawlServerListQueue } from '../../config/redis';
 
 const router = Router();
 

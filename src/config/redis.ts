@@ -4,6 +4,7 @@ import onServerListCrawlerJob from '../app/queues/crawl.job';
 import logger from './logger';
 import onQuickUpdateJob from '../app/queues/quickUpdate.job';
 import onSweeperJob from '../app/queues/sweeper.job';
+import { Redis } from 'ioredis';
 
 // Setup Redis configuration
 type RedisConfigType = {
@@ -20,6 +21,8 @@ if (config.production) {
   redisConfig.username = config.redis.username;
   redisConfig.password = config.redis.password;
 }
+
+export const redis = new Redis(redisConfig);
 
 /**
  * Queue for Crawling the Mojang blocked servers API

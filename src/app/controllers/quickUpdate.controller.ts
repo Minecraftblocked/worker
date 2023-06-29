@@ -1,6 +1,6 @@
 import { secretMiddleware } from './../middlewares/secret.middleware';
 import { NextFunction, Request, Response, Router } from 'express';
-import { crawlMojangQueue } from '../../config/queue';
+import { crawlMojangQueue } from '../../config/redis';
 
 const router = Router();
 
