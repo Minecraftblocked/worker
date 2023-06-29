@@ -32,10 +32,11 @@ export const crawlMojangQueue = new Bull('crawl_mojang', {
 });
 
 crawlMojangQueue.process(async (job: Job) => {
-  logger.info(`Starting Mojang Queue Job: ${job.id}`);
   if (job.data.quickUpdate && job.data.quickUpdate == true) {
+    logger.info(`Starting OnQuickUpdate Queue Job: ${job.id}`);
     await onQuickUpdateJob(job);
   } else {
+    logger.info(`Starting Sweeper Queue Job: ${job.id}`);
     await onSweeperJob(job);
   }
 });

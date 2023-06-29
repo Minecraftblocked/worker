@@ -25,8 +25,6 @@ const onJob = async (job: Job) => {
     // Extract and clean the server hashes from the response data
     const blockedServerHashes = response.data.split('\n').filter((hash: string) => hash.trim() !== '');
 
-    logger.info(`Discovered ${blockedServerHashes.length} blocked server hashes from Mojang API`);
-
     // Update progress
     job.progress(10);
 
