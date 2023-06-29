@@ -13,6 +13,7 @@ import { environment as config } from './config/environment';
 // Routes
 import statusRoutes from './app/routes/status.routes';
 import crawlRoutes from './app/routes/crawl.routes';
+import mojangRoutes from './app/routes/mojang.routes';
 
 /**
  * ===
@@ -47,6 +48,7 @@ app.use(morganMiddleware);
 /* Routes */
 app.use(statusRoutes);
 app.use(crawlRoutes);
+app.use(mojangRoutes);
 
 //! define after everything else
 app.use(handleError);

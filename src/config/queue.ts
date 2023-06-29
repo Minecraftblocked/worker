@@ -1,24 +1,40 @@
 import Bull, { Job } from 'bull';
 import { environment as config } from './environment';
-import onCrawlMojangAPIJob from '../app/queues/mojangBlockedServers.job';
-import onServerListCrawlerJob from '../app/queues/crawler.job';
+import onServerListCrawlerJob from '../app/queues/crawl.job';
 import logger from './logger';
+import onQuickUpdateJob from '../app/queues/quickUpdate.job';
+import onSweeperJob from '../app/queues/sweeper.job';
+
+// Setup Redis configuration
+type RedisConfigType = {
+  host: string;
+  port: number;
+  username?: string;
+  password?: string;
+};
+const redisConfig: RedisConfigType = {
+  host: config.redis.host,
+  port: config.redis.port,
+};
+if (config.production) {
+  redisConfig.username = config.redis.username;
+  redisConfig.password = config.redis.password;
+}
 
 /**
  * Queue for Crawling the Mojang blocked servers API
  */
 export const crawlMojangQueue = new Bull('crawl_mojang', {
-  redis: {
-    host: config.redis.host,
-    port: config.redis.port,
-    username: config.redis.username,
-    password: config.redis.password,
-  },
+  redis: redisConfig,
 });
 
 crawlMojangQueue.process(async (job: Job) => {
   logger.info(`Starting Mojang Queue Job: ${job.id}`);
-  await onCrawlMojangAPIJob(job);
+  if (job.data.quickUpdate && job.data.quickUpdate == true) {
+    await onQuickUpdateJob(job);
+  } else {
+    await onSweeperJob(job);
+  }
 });
 
 crawlMojangQueue.on('error', (error) => {
@@ -33,12 +49,7 @@ crawlMojangQueue.on('completed', (job) => {
  * Queue for crawling different minecraft server lists
  */
 export const crawlServerListQueue = new Bull('crawl_server_list', {
-  redis: {
-    host: config.redis.host,
-    port: config.redis.port,
-    username: config.redis.username,
-    password: config.redis.password,
-  },
+  redis: redisConfig,
 });
 
 crawlServerListQueue.process(async (job: Job) => {

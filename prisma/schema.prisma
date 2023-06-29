@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -16,8 +17,8 @@ model Crawl {
   id Int @id @default(autoincrement())
 
   serverListOrigin   String
-  serverName         String?
-  serverHost         String?
+  serverName         String? @db.Text
+  serverHost         String? @db.Text
   serverIpAddress    String?
   serverHostWildcard String?
   serverPort         Int?
@@ -31,6 +32,8 @@ model Crawl {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@fulltext([serverName, serverHost])
 }
 
 model Server {

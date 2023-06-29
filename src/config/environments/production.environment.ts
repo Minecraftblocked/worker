@@ -9,13 +9,6 @@ dotenv.config();
  */
 export const environment = {
   production: true,
-  db: {
-    host: process.env.MYSQL_HOST || 'localhost',
-    port: Number(process.env.MYSQL_PORT) || 3306,
-    database: process.env.MYSQL_DATABASE || 'database',
-    user: process.env.MYSQL_USER || 'root',
-    password: process.env.MYSQL_PASSWORD || 'root',
-  },
   redis: {
     host: process.env.REDIS_HOST || 'localhost',
     port: Number(process.env.REDIS_PORT) || 9999,
@@ -27,5 +20,8 @@ export const environment = {
   },
   worker: {
     secret: process.env.SECRET || '',
+  },
+  openai: {
+    key: process.env.OPENAI_KEY || '',
   },
 };

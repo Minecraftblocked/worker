@@ -100,45 +100,47 @@ export const updateServerWithCrawl = async (serverHash: string, crawlId: number)
 };
 
 export const updateManyUnblockedServers = async (hashes: string[]) => {
-  // Retrieve all servers from the database that are still marked as blocked,
-  // but are not included in the list provided by the Mojang API.
-  const serverIds = await prisma.server
-    .findMany({
-      where: {
-        mojangHash: {
-          notIn: hashes,
+  try {
+    // Retrieve IDs of servers that are still marked as blocked, but are not in the Mojang's blocked hashes list.
+    const serverIds = await prisma.server
+      .findMany({
+        where: {
+          mojangHash: {
+            notIn: hashes,
+          },
+          isBlocked: true,
         },
-        isBlocked: true,
+        select: {
+          id: true,
+        },
+      })
+      .then((servers) => servers.map((server) => server.id));
+
+    logger.info(`Identified ${serverIds.length} servers for status update to unblocked`);
+    logger.info(`Server Ids: ${serverIds}`);
+
+    // Update the status of identified servers to unblocked
+    await prisma.server.updateMany({
+      where: {
+        id: {
+          in: serverIds,
+        },
       },
-      select: {
-        id: true, 
+      data: {
+        isBlocked: false,
       },
-    })
-    .then((servers: any) => servers.map((server: any) => server.id));
+    });
 
-  logger.info(`Updated the Status to Unblocked for ${serverIds.length} servers`);
-  logger.info(`Server Ids: ${serverIds}`);
-
-  // Now, update all those servers to be unblocked
-  await prisma.server.updateMany({
-    where: {
-      id: {
-        in: serverIds
-      }
-    },
-    data: {
-      isBlocked: false,
-    },
-  });
-
-  // Now store all the unblocked statuses in database
-  await serverIds.map(
-    async (serverId: number) =>
+    // Log server status changes in the database
+    for (const serverId of serverIds) {
       await prisma.serverStatusChange.create({
         data: {
           serverId,
           newIsBlocked: false,
         },
-      }),
-  );
+      });
+    }
+  } catch (error) {
+    logger.error(`Error in updateManyUnblockedServers: ${error}`);
+  }
 };

@@ -14,6 +14,7 @@ export const secretMiddleware = (req: Request, res: Response, next: NextFunction
     }
     const passwordAsString = String(password);
     if (passwordAsString !== config.worker.secret) {
+      console.debug(`Secret is: ${config.worker.secret}`);
       return res.status(400).json({ error: 'Password is required' });
     }
   }

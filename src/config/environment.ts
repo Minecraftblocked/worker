@@ -5,13 +5,6 @@ let env: Environment;
 
 type Environment = {
   production: boolean;
-  db: {
-    host: string;
-    port: number;
-    database: string;
-    user: string;
-    password: string;
-  };
   redis: {
     host: string;
     port: number;
@@ -23,6 +16,9 @@ type Environment = {
   };
   worker: {
     secret: string;
+  };
+  openai: {
+    key: string;
   };
 };
 

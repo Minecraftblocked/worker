@@ -1,10 +1,7 @@
 import { Job } from 'bull';
 import logger from '../../config/logger';
-import onMinecraftServersOrg from './crawler/minecraftServersOrg.crawler';
+import onMinecraftServersOrg from './serverList/minecraftServersOrg.crawler';
 
-/**
- * Crawl from different minecraft server lists
- */
 const onJob = async (job: Job) => {
   try {
     switch (job.data.origin) {

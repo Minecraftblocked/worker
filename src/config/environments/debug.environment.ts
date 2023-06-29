@@ -3,13 +3,6 @@
  */
 export const environment = {
   production: false,
-  db: {
-    host: 'localhost',
-    port: 3306,
-    database: 'blocked',
-    user: 'root',
-    password: '',
-  },
   redis: {
     host: 'localhost',
     port: 6379,
@@ -21,5 +14,8 @@ export const environment = {
   },
   worker: {
     secret: 'password',
+  },
+  openai: {
+    key: process.env.OPENAI_KEY || '',
   },
 };
