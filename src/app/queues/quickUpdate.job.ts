@@ -2,10 +2,13 @@ import axios from 'axios';
 import { Job } from 'bull';
 import FailedMojangAPIError from '../errors/queue/failedMojangAPI';
 import logger from '../../config/logger';
-import { attachServerWithCrawl, insertOrUpdateServerByHash } from '../services/servers.service';
+import { attachServerWithCrawl, findServerByHash, insertOrUpdateServerByHash } from '../services/servers.service';
 import { processBlockedServerHash } from '../services/providers.service';
 import { redis } from '../../config/redis';
 import { delay } from '../util/delay';
+import { createTwitterMessage, postTweet } from '../services/twitter.service';
+import { Crawl, Server } from '@prisma/client';
+import { default as Filter } from 'bad-words';
 
 /**
  * This job retrieves blocked server hashes from Mojang's API
@@ -49,6 +52,39 @@ const onJob = async (job: Job) => {
     if (!foundCrawl) {
       await processBlockedServerHash(newHash);
       await delay(500);
+    }
+
+    // [4]: Notify twitter client of newly blocked server
+    const server: Server | null = await findServerByHash(newHash);
+    if (server && server.crawlId) {
+      // @ts-expect-error typescript is wrong for some reason
+      const crawl: Crawl = server.crawl;
+
+      let hostName = crawl.serverHost;
+      if (hostName && crawl.censored) {
+        const filter = new Filter({ placeHolder: '*' });
+        hostName = filter.clean(hostName);
+      }
+
+      const message = createTwitterMessage([
+        'Server blocked by Mojang ❌',
+        '',
+        `Hash '${newHash}' has been blocked.`,
+        `Server is known as ${hostName}`,
+        '',
+        'Stay tuned for updates.',
+      ]);
+      await postTweet(message);
+    } else {
+      const message = createTwitterMessage([
+        'Server blocked by Mojang ❌',
+        '',
+        `Hash '${newHash}' has been blocked.`,
+        'We have yet to indentify the hash.',
+        '',
+        'Stay tuned for updates.',
+      ]);
+      await postTweet(message);
     }
   }
 

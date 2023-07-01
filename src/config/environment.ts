@@ -20,6 +20,13 @@ type Environment = {
   openai: {
     key: string;
   };
+  twitter: {
+    apiKey: string;
+    apiSecret: string;
+    bearerToken: string;
+    accessToken: string;
+    accessTokenSecret: string;
+  };
 };
 
 if (process.env.ENVIRONMENT === 'production') {

@@ -1,3 +1,4 @@
+import { Server } from '@prisma/client';
 import logger from '../../config/logger';
 import { prisma } from '../../config/prisma';
 import CannotFindServerError from '../errors/server/CannotFindServer.error';
@@ -99,7 +100,7 @@ export const updateServerWithCrawl = async (serverHash: string, crawlId: number)
   });
 };
 
-export const updateManyUnblockedServers = async (hashes: string[]) => {
+export const updateManyUnblockedServers = async (hashes: string[]): Promise<number[]> => {
   try {
     // Retrieve IDs of servers that are still marked as blocked, but are not in the Mojang's blocked hashes list.
     const serverIds = await prisma.server
@@ -140,7 +141,38 @@ export const updateManyUnblockedServers = async (hashes: string[]) => {
         },
       });
     }
+
+    // Return the server IDs that were updated
+    return serverIds;
   } catch (error) {
     logger.error(`Error in updateManyUnblockedServers: ${error}`);
+    // In case of error, return an empty array
+    return [];
   }
+};
+
+export const findServerByHash = async (hash: string): Promise<Server | null> => {
+  const result = await prisma.server.findUnique({
+    where: {
+      mojangHash: hash,
+    },
+    include: {
+      ServerStatusChange: true,
+      crawl: true,
+    },
+  });
+  return result;
+};
+
+export const findServerByID = async (id: number): Promise<Server | null> => {
+  const result = await prisma.server.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      ServerStatusChange: true,
+      crawl: true,
+    },
+  });
+  return result;
 };

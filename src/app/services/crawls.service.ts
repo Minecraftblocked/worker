@@ -1,6 +1,6 @@
 import * as dns from 'dns';
 import { promisify } from 'util';
-import { hashHostname } from '../util/hashDomain';
+import { hashHostname } from '../util/hashUtils';
 import { parseWildcardDomain } from '../util/wildcardDomain';
 import logger from '../../config/logger';
 import { wildcardBlackList } from '../../config/blacklist';
