@@ -93,7 +93,7 @@ const onJob = async (job: Job) => {
     // Compute job time taken
     const endTime = Date.now();
     const timeTakenInSeconds = (endTime - startTime) / 1000;
-    logger.info(`✅ Job QuickUpdate[${job.id}] time taken: ${timeTakenInSeconds} seconds`);
+    logger.info(`✅ Job Sweeper[${job.id}] time taken: ${timeTakenInSeconds} seconds`);
   } catch (error) {
     logger.error(`Error in onJob: ${error}`);
   }
