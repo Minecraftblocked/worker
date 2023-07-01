@@ -15,6 +15,7 @@ import { getTimeDifference } from '../util/dateUtils';
  * It should be scheduled to run every 15 minutes.
  */
 const onJob = async (job: Job) => {
+  const startTime = job.data.startTime;
   try {
     // Fetch the latest blocked server hashes from Mojang API with cache-busting parameter
     const response = await axios.get(
@@ -89,6 +90,10 @@ const onJob = async (job: Job) => {
 
     // Mark job as complete
     job.progress(100);
+    // Compute job time taken
+    const endTime = Date.now();
+    const timeTakenInSeconds = (endTime - startTime) / 1000;
+    logger.info(`✅ Job QuickUpdate[${job.id}] time taken: ${timeTakenInSeconds} seconds`);
   } catch (error) {
     logger.error(`Error in onJob: ${error}`);
   }

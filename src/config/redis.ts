@@ -33,9 +33,11 @@ export const crawlMojangQueue = new Bull('crawl_mojang', {
 
 crawlMojangQueue.process(async (job: Job) => {
   if (job.data.quickUpdate && job.data.quickUpdate == true) {
+    logger.info('');
     logger.info(`Starting OnQuickUpdate Queue Job: ${job.id}`);
     await onQuickUpdateJob(job);
   } else {
+    logger.info('');
     logger.info(`Starting Sweeper Queue Job: ${job.id}`);
     await onSweeperJob(job);
   }
@@ -58,6 +60,7 @@ export const crawlServerListQueue = new Bull('crawl_server_list', {
 
 crawlServerListQueue.process(async (job: Job) => {
   if (job.data.origin && job.data.startTime) {
+    logger.info('');
     logger.info(`Starting ServerList Job: ${job.id} ${job.data.origin}`);
     await onServerListCrawlerJob(job);
   } else {
