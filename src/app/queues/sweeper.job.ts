@@ -46,7 +46,7 @@ const onJob = async (job: Job) => {
         // @ts-expect-error typescript is wrong for some reason
         const statusChanges: ServerStatusChange[] = server.ServerStatusChange;
 
-        // Rename incase of censorship
+        // Rename in case of censorship
         let hostName = crawl.serverHost;
         if (hostName && crawl.censored) {
           const filter = new Filter({ placeHolder: '*' });
@@ -64,8 +64,7 @@ const onJob = async (job: Job) => {
           messageLines = [
             'Server has been unblocked by Mojang again ✅',
             '',
-            `Hash: '${server.mojangHash}' is now unblocked.`,
-            `Server is known as ${hostName || 'Unknown'}`,
+            `Server is known as ${hostName || server.mojangHash}`,
             `Blocked for ${timeBlocked}`,
             '',
             'Stay tuned for further updates.',
@@ -75,8 +74,7 @@ const onJob = async (job: Job) => {
           messageLines = [
             'Server has been unblocked by Mojang ✅',
             '',
-            `Hash: '${server.mojangHash}' is now unblocked.`,
-            `Server is known as ${hostName || 'Unknown'}`,
+            `Server is known as ${hostName || server.mojangHash}`,
             `Blocked for ${timeBlocked}`,
             '',
             'Stay tuned for further updates.',

@@ -69,7 +69,6 @@ const onJob = async (job: Job) => {
       const message = createTwitterMessage([
         'Server blocked by Mojang ❌',
         '',
-        `Hash '${newHash}' has been blocked.`,
         `Server is known as ${hostName}`,
         '',
         'Stay tuned for updates.',
@@ -80,7 +79,6 @@ const onJob = async (job: Job) => {
         'Server blocked by Mojang ❌',
         '',
         `Hash '${newHash}' has been blocked.`,
-        'We have yet to indentify the hash.',
         '',
         'Stay tuned for updates.',
       ]);
